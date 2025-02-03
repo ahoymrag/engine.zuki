@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" x-data="appData()" x-init="init()">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engine Zuki</title>
+  <!-- Alpine.js for simple reactivity -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Link to CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li @click="currentPage = 'home'" :class="{ active: currentPage === 'home' }">Home</li>
+      <li @click="currentPage = 'notes'" :class="{ active: currentPage === 'notes' }">Notes</li>
+      <li @click="currentPage = 'reminders'" :class="{ active: currentPage === 'reminders' }">Reminders</li>
+      <li @click="currentPage = 'music'" :class="{ active: currentPage === 'music' }">Music</li>
+      <li @click="currentPage = 'game'" :class="{ active: currentPage === 'game' }">Game</li>
+      <!-- The Settings tab can be hidden or require a special click sequence -->
+      <li @click="currentPage = 'settings'" :class="{ active: currentPage === 'settings' }" class="settings-link">Settings</li>
+    </ul>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- Home Page: Robot Face -->
+    <section x-show="currentPage === 'home'" class="page">
+      <div class="robot-face glass">
+        <div class="eye left-eye"></div>
+        <div class="eye right-eye"></div>
+        <div class="nose"></div>
+      </div>
+      <h1>Welcome to Engine Zuki</h1>
+    </section>
+
+    <!-- Notes Section -->
+    <section x-show="currentPage === 'notes'" class="page">
+      <h1>Notes</h1>
+      <form @submit.prevent="addNote">
+        <input type="text" placeholder="Enter a note" x-model="newNote">
+        <button type="submit">Add Note</button>
+      </form>
+      <ul>
+        <template x-for="(note, index) in notes" :key="index">
+          <li x-text="note"></li>
+        </template>
+      </ul>
+    </section>
+
+    <!-- Reminders Section -->
+    <section x-show="currentPage === 'reminders'" class="page">
+      <h1>Reminders</h1>
+      <form @submit.prevent="addReminder">
+        <input type="text" placeholder="Enter a reminder" x-model="newReminder">
+        <button type="submit">Add Reminder</button>
+      </form>
+      <ul>
+        <template x-for="(reminder, index) in reminders" :key="index">
+          <li x-text="reminder"></li>
+        </template>
+      </ul>
+    </section>
+
+    <!-- Music Section -->
+    <section x-show="currentPage === 'music'" class="page">
+      <h1>Music</h1>
+      <audio controls>
+        <source src="assets/music/sample.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+
+    <!-- Game Section -->
+    <section x-show="currentPage === 'game'" class="page">
+      <h1>Game</h1>
+      <p>Game coming soon...</p>
+    </section>
+
+    <!-- Settings Section -->
+    <section x-show="currentPage === 'settings'" class="page">
+      <h1>Settings</h1>
+      <p>Settings and system options go here.</p>
+    </section>
+  </main>
+
+  <!-- Link to main JS file -->
+  <script src="js/main.js"></script>
+</body>
+</html>
