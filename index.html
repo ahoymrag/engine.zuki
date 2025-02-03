@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Engine Zuki</title>
-  <!-- Alpine.js for simple reactivity -->
+  <!-- Alpine.js via CDN for reactivity -->
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <!-- Link to CSS -->
   <link rel="stylesheet" href="style.css">
@@ -18,21 +18,25 @@
       <li @click="currentPage = 'reminders'" :class="{ active: currentPage === 'reminders' }">Reminders</li>
       <li @click="currentPage = 'music'" :class="{ active: currentPage === 'music' }">Music</li>
       <li @click="currentPage = 'game'" :class="{ active: currentPage === 'game' }">Game</li>
-      <!-- The Settings tab can be hidden or require a special click sequence -->
       <li @click="currentPage = 'settings'" :class="{ active: currentPage === 'settings' }" class="settings-link">Settings</li>
     </ul>
   </nav>
 
   <!-- Main Content Area -->
   <main>
-    <!-- Home Page: Robot Face -->
+    <!-- Home Section: WALL‑E Inspired Robot Face and Serial Connect -->
     <section x-show="currentPage === 'home'" class="page">
-      <div class="robot-face glass">
-        <div class="eye left-eye"></div>
-        <div class="eye right-eye"></div>
-        <div class="nose"></div>
+      <div class="robot-face">
+        <div class="face-box">
+          <div class="eye left-eye"></div>
+          <div class="eye right-eye"></div>
+          <div class="mouth"></div>
+        </div>
       </div>
       <h1>Welcome to Engine Zuki</h1>
+      <p>Your friendly robot companion.</p>
+      <button class="connect-btn" @click="connectSerial()">Connect Arduino</button>
+      <p x-text="serialStatus"></p>
     </section>
 
     <!-- Notes Section -->
@@ -75,13 +79,27 @@
     <!-- Game Section -->
     <section x-show="currentPage === 'game'" class="page">
       <h1>Game</h1>
-      <p>Game coming soon...</p>
+      <p>Simple game coming soon... Stay tuned!</p>
     </section>
 
-    <!-- Settings Section -->
+    <!-- Settings Section: Instructions -->
     <section x-show="currentPage === 'settings'" class="page">
-      <h1>Settings</h1>
-      <p>Settings and system options go here.</p>
+      <h1>Settings &amp; Instructions</h1>
+      <div class="glass instructions">
+        <h2>Project Features</h2>
+        <ul>
+          <li><strong>Home (Robot Face):</strong> Displays an animated robot face inspired by WALL‑E.</li>
+          <li><strong>Notes:</strong> Create and manage simple notes.</li>
+          <li><strong>Reminders:</strong> Add reminders for tasks.</li>
+          <li><strong>Music:</strong> Play audio files from a local soundbank.</li>
+          <li><strong>Game:</strong> A placeholder for a simple game (more features coming).</li>
+          <li><strong>Arduino Connection:</strong> Use the "Connect Arduino" button on the Home page to interact with your Arduino via the Web Serial API (supported on Chromium‑based browsers).</li>
+        </ul>
+        <h2>How to Use</h2>
+        <p>
+          Use the navigation bar at the top to switch between features. On the Home page, click "Connect Arduino" to initiate a serial connection with your Arduino. Make sure your Arduino is connected via USB and running a compatible sketch (e.g., one that communicates at 9600 baud).
+        </p>
+      </div>
     </section>
   </main>
 
