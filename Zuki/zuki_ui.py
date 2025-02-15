@@ -1,6 +1,16 @@
 import pygame
 import sys
 import math
+import subprocess
+
+# Import your real modules
+import motor_control
+import speech
+import ai_brain
+import sensors
+import web_server
+# Note: piano will be launched as a separate process
+# so we don't need to import it here.
 
 pygame.init()
 
@@ -13,15 +23,15 @@ def hex_to_rgb(hex_str):
 colors_hex = ["#6bc8cd", "#cdd8c7", "#fbb38d", "#f58b7e", "#d05774"]
 colors_rgb = [hex_to_rgb(h) for h in colors_hex]
 
-# We'll use these colors as follows:
+# Use these colors for Zuki's face:
 face_border_color = colors_rgb[0]  # #6bc8cd
-# Face fill color will vary with expression:
 face_fill_colors = {
     "neutral": colors_rgb[1],  # #cdd8c7
     "happy": colors_rgb[2],    # #fbb38d
     "sad": colors_rgb[4]       # #d05774
 }
-# Use colors_rgb[3] (#f58b7e) as an accent (for input field border)
+# Accent color for input field border:
+accent_color = colors_rgb[3]   # #f58b7e
 
 # --- Screen Setup ---
 WIDTH, HEIGHT = 800, 600
@@ -48,10 +58,8 @@ def draw_gradient_background(surface, color_stops):
     """Draws a vertical gradient over the entire surface using multiple color stops."""
     h = surface.get_height()
     num_stops = len(color_stops)
-    # Each stop is placed evenly from y=0 to y=h-1
     for y in range(h):
         pos = y / (h - 1)
-        # Determine which two stops y falls between
         segment = pos * (num_stops - 1)
         index = int(segment)
         t = segment - index
@@ -77,18 +85,20 @@ def quadratic_bezier(P0, P1, P2, num_points=30):
     return points
 
 def draw_face(surface, expression, center, radius):
-    """Draws Zuki's face with eyes and a mouth that changes based on expression."""
+    """Draws Zuki's face with eyes and a mouth that changes based on expression.
+       The eyes now oscillate to give a 'living' appearance."""
     fill_color = face_fill_colors.get(expression, face_fill_colors["neutral"])
-    # Draw face circle
     pygame.draw.circle(surface, fill_color, center, radius)
     pygame.draw.circle(surface, face_border_color, center, radius, 4)
     
-    # Draw eyes
+    # Animate eyes: oscillate slightly over time
     eye_radius = 8
     eye_offset_x = 35
     eye_offset_y = 30
-    left_eye = (center[0] - eye_offset_x, center[1] - eye_offset_y)
-    right_eye = (center[0] + eye_offset_x, center[1] - eye_offset_y)
+    # Oscillation factor based on time (in milliseconds)
+    osc = math.sin(pygame.time.get_ticks() / 500.0) * 3  
+    left_eye = (center[0] - eye_offset_x + osc, center[1] - eye_offset_y + osc)
+    right_eye = (center[0] + eye_offset_x - osc, center[1] - eye_offset_y - osc)
     pygame.draw.circle(surface, (0, 0, 0), left_eye, eye_radius)
     pygame.draw.circle(surface, (0, 0, 0), right_eye, eye_radius)
     
@@ -117,9 +127,6 @@ def draw_face(surface, expression, center, radius):
 def dummy_motor_control_move(direction):
     return f"Moving {direction}."
 
-def dummy_speech_speak(text):
-    return f"Zuki says: {text}"
-
 def dummy_sensors_read():
     return "Sensor data: [temperature: 22°C, humidity: 45%]"
 
@@ -141,12 +148,13 @@ def process_command(command):
     elif command == "help":
         current_expression = "happy"
         return ("Available Commands:\n"
-                "  move [direction] - Move Zuki (forward, backward, left, right)\n"
-                "  speak [text] - Make Zuki talk\n"
-                "  sense - Read sensor data\n"
-                "  ai [question] - Ask Zuki something\n"
-                "  web - Start web server\n"
-                "  exit - Shutdown Zuki", False)
+                "  move [direction]  - Move Zuki (forward, backward, left, right)\n"
+                "  speak [text]      - Make Zuki talk\n"
+                "  sense             - Read sensor data\n"
+                "  ai [question]     - Ask Zuki something\n"
+                "  web               - Start web server\n"
+                "  piano             - Launch console piano\n"
+                "  exit              - Shutdown Zuki", False)
     elif command.startswith("move "):
         parts = command.split(" ", 1)
         if len(parts) > 1:
@@ -159,17 +167,24 @@ def process_command(command):
     elif command.startswith("speak "):
         text = command[6:]
         current_expression = "happy"
-        return dummy_speech_speak(text), False
+        speech.speak(text)
+        return f"Zuki said: {text}", False
     elif command == "sense":
         current_expression = "neutral"
         return dummy_sensors_read(), False
     elif command.startswith("ai "):
         query = command[3:]
         current_expression = "neutral"
-        return dummy_ai_process(query), False
+        response = dummy_ai_process(query)
+        return f"🧠 Zuki: {response}", False
     elif command == "web":
         current_expression = "neutral"
         return dummy_web_server_start(), False
+    elif command == "piano":
+        current_expression = "neutral"
+        # Launch the console piano in a separate process to avoid pygame conflicts.
+        subprocess.Popen(["python", "piano.py"])
+        return "Console piano launched.", False
     else:
         current_expression = "sad"
         return "Unknown command. Type 'help' for available commands.", False
@@ -192,7 +207,6 @@ while running:
             if event.key == pygame.K_BACKSPACE:
                 current_input = current_input[:-1]
             elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
-                # Echo command in terminal
                 terminal_lines.append("> " + current_input)
                 result, should_exit = process_command(current_input)
                 if result:
@@ -203,12 +217,10 @@ while running:
                     running = False
                     break
             else:
-                # Append character if printable
                 if event.unicode:
                     current_input += event.unicode
 
     # --- Drawing ---
-    # Draw a smooth vertical gradient background using our palette
     draw_gradient_background(screen, colors_rgb)
     
     # Draw Zuki's face near the top center
@@ -216,12 +228,11 @@ while running:
     face_radius = 100
     draw_face(screen, current_expression, face_center, face_radius)
     
-    # Terminal Log Area (a white box with a border)
+    # Terminal Log Area (white box with border)
     terminal_area = pygame.Rect(50, 300, 700, 200)
     pygame.draw.rect(screen, (255, 255, 255), terminal_area)
     pygame.draw.rect(screen, face_border_color, terminal_area, 2)
     
-    # Display the last few terminal lines (limit to 8)
     max_lines = 8
     lines_to_show = terminal_lines[-max_lines:]
     y = terminal_area.y + 10
@@ -233,7 +244,7 @@ while running:
     # Input Field at the bottom
     input_rect = pygame.Rect(50, 520, 700, 40)
     pygame.draw.rect(screen, (255, 255, 255), input_rect)
-    pygame.draw.rect(screen, colors_rgb[3], input_rect, 2)
+    pygame.draw.rect(screen, accent_color, input_rect, 2)
     input_surface = input_font.render(current_input, True, (0, 0, 0))
     screen.blit(input_surface, (input_rect.x + 10, input_rect.y + 5))
     
@@ -248,4 +259,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-››
