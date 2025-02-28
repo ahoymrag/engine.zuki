@@ -3,7 +3,17 @@
 ## Introduction
 Zuki is a Raspberry Pi-powered personal robot with a command-line interface (CLI) and an optional graphical UI that displays emotions and speech bubbles. The project is designed to be modular, with placeholder components that can be replaced with real implementations over time.
 
-## Features
+
+## Tagline::::
+Zuki, a multi-functional interactive AI assistant with a graphical UI, speech, AI, and even a playable piano! 
+
+## Core Structure
+
+
+
+
+
+## Targeted Features
 - Command-line interface (CLI) for controlling Zuki.
 - Web API for remote control.
 - Speech recognition and text-to-speech (TTS) capabilities.
@@ -12,6 +22,8 @@ Zuki is a Raspberry Pi-powered personal robot with a command-line interface (CLI
 - Visual UI using Pygame to display Zuki's emotions.
 
 ---
+
+# Using and Playing with Zuki
 
 ## Installation
 ### Step 1: Clone the Repository
