@@ -9,6 +9,20 @@ Zuki, a multi-functional interactive AI assistant with a graphical UI, speech, A
 
 ## Core Structure
 
+zuki/
+│── main.py
+│── zuki_ui.py
+│── piano.py
+│── speech.py
+│── motor_control.py  # (if it exists)
+│── sensors.py  # (if it exists)
+│── ai_brain.py  # (if it exists)
+│── web_server.py  # (if it exists)
+│── install.sh  # (optional setup script)
+│── requirements.txt  # ✅ ADD THIS FILE HERE!
+│── README.md  # (optional: instructions for setup and usage)
+│── assets/  # (optional: if you have images, sounds, etc.)
+└── venv/  # (optional, but usually not committed)
 
 
 
@@ -36,11 +50,10 @@ git clone https://github.com/yourusername/zuki.git .
 
 ### Step 2: Set Up a Virtual Environment
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Mac/Linux
-# OR
-.venv\Scripts\Activate    # Windows (PowerShell)
-```
+python -m venv .zuki
+source .zuki/bin/activate  # Mac/Linux
+
+
 
 ### Step 3: Install Dependencies
 ```bash
