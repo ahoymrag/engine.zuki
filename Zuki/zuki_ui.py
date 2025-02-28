@@ -9,6 +9,9 @@ import speech
 import ai_brain
 import sensors
 import web_server
+import notes
+import personality
+import zuki_games  # Our new file with the 2 games
 # Note: piano will be launched as a separate process
 # so we don't need to import it here.
 
@@ -154,7 +157,9 @@ def process_command(command):
                 "  ai [question]     - Ask Zuki something\n"
                 "  web               - Start web server\n"
                 "  piano             - Launch console piano\n"
-                "  exit              - Shutdown Zuki", False)
+                "  exit              - Shutdown Zuki\n"
+                "  zuki magic        - Play the number guessing magic trick!\n"
+                "  20 questions      - Play a yes/no guess game!\n"), False
     elif command.startswith("move "):
         parts = command.split(" ", 1)
         if len(parts) > 1:
@@ -185,6 +190,28 @@ def process_command(command):
         # Launch the console piano in a separate process to avoid pygame conflicts.
         subprocess.Popen(["python", "piano.py"])
         return "Console piano launched.", False
+    elif command.startswith("note "):
+        note_text = command[5:]
+        response = notes.add_note(note_text)
+        return f"Note added: {note_text}", False
+    elif command == "notes":
+        response = notes.list_notes()
+        return f"📒 Your Notes:\n{response}", False
+    elif command == "clear notes":
+        response = notes.clear_notes()
+        return f"Notes cleared: {response}", False
+    elif command == "hello zuki":
+        response = personality.greet_zuki()
+        return f"{response}", False
+    elif command == "care guide":
+        guide = personality.show_care_guide()
+        return f"{guide}", False
+    elif command == "zuki magic":
+        current_expression = "happy"
+        return zuki_games.magic_trick(), False
+    elif command == "20 questions":
+        current_expression = "happy"
+        return zuki_games.twenty_questions(), False
     else:
         current_expression = "sad"
         return "Unknown command. Type 'help' for available commands.", False
