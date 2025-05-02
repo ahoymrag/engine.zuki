@@ -9,6 +9,39 @@ import piano  # piano.py
 import notes  # notes.py
 import personality  # personality.py
 import zuki_games  # Our new file with the 2 games
+import time
+import os
+
+def show_help():
+    """Display available commands with animations."""
+    os.system('clear')  # Clear the terminal for a clean display
+    print("\n✨ Welcome to Zuki's Command Center! ✨\n")
+    time.sleep(0.5)
+
+    commands = [
+        "move [direction]   - Move Zuki (forward, backward, left, right)",
+        "speak [text]       - Make Zuki talk",
+        "sense              - Read sensor data",
+        "ai [question]      - Ask Zuki something",
+        "web                - Start web server",
+        "piano              - Launch the console piano",
+        "note [text]        - Save a note (timestamped)",
+        "notes              - List saved notes",
+        "clear notes        - Clear all saved notes",
+        "hello zuki         - Greet Zuki (reset lonely timer)",
+        "care guide         - Show how to take care of Zuki",
+        "exit               - Shutdown Zuki",
+        "zuki magic         - Play the number guessing magic trick!",
+        "20 questions       - Play a yes/no guess game!"
+    ]
+
+    print("🛠️  Available Commands:\n")
+    for command in commands:
+        print(f"  ➡️  {command}")
+        time.sleep(0.2)  # Add a slight delay for animation effect
+
+    print("\n💡 Tip: Type 'exit' to shut down Zuki anytime.")
+    print("🎉 Have fun exploring Zuki's features!\n")
 
 def main():
     print("\n🤖 Welcome to Zuki's Console! Type 'help' for commands.")
@@ -31,22 +64,7 @@ def main():
             break
         
         elif command == "help":
-            print("\nAvailable Commands:")
-            print("  move [direction]   - Move Zuki (forward, backward, left, right)")
-            print("  speak [text]       - Make Zuki talk")
-            print("  sense              - Read sensor data")
-            print("  ai [question]      - Ask Zuki something")
-            print("  web                - Start web server")
-            print("  piano              - Launch the console piano")
-            print("  note [text]        - Save a note (timestamped)")
-            print("  notes              - List saved notes")
-            print("  clear notes        - Clear all saved notes")
-            print("  hello zuki         - Greet Zuki (reset lonely timer)")
-            print("  care guide         - Show how to take care of Zuki")
-            print("  exit               - Shutdown Zuki")
-            print("  zuki magic         - Play the number guessing magic trick!")
-            print("  20 questions       - Play a yes/no guess game!")
-            # speech.speak("Here are the available commands.")
+            show_help()
 
         elif command.startswith("move "):
             direction = command.split(" ")[1]

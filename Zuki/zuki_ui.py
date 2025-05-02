@@ -2,6 +2,8 @@ import pygame
 import sys
 import math
 import subprocess
+import tkinter as tk
+from tkinter import messagebox
 
 # Import your real modules
 import motor_control
@@ -286,3 +288,128 @@ while running:
 
 pygame.quit()
 sys.exit()
+
+import tkinter as tk
+from tkinter import messagebox
+import speech
+import personality
+import zuki_games
+import notes
+import sensors
+
+class ZukiApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Zuki - Your Personal Assistant")
+        self.root.geometry("600x600")
+
+        # Default Theme
+        self.current_theme = "light"
+        self.themes = {
+            "light": {"bg": "white", "fg": "black", "button_bg": "#f0f0f0", "button_fg": "black"},
+            "dark": {"bg": "#2e2e2e", "fg": "white", "button_bg": "#444444", "button_fg": "white"}
+        }
+        self.apply_theme()
+
+        # Header
+        self.header = tk.Label(root, text="🤖 Welcome to Zuki!", font=("Arial", 18, "bold"))
+        self.header.pack(pady=10)
+
+        # Mood Display
+        self.mood_label = tk.Label(root, text="💭 Mood: Neutral", font=("Arial", 14))
+        self.mood_label.pack(pady=10)
+
+        # Command Buttons
+        self.command_frame = tk.Frame(root, bg=self.themes[self.current_theme]["bg"])
+        self.command_frame.pack(pady=20)
+
+        tk.Button(self.command_frame, text="Greet Zuki", command=self.greet_zuki, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=0, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Give Zuki a Fruit", command=self.give_fruit, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=1, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Play Magic Trick", command=self.play_magic_trick, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=2, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Play 20 Questions", command=self.play_20_questions, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=3, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Read Sensors", command=self.read_sensors, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=4, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="View Notes", command=self.view_notes, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=5, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Clear Notes", command=self.clear_notes, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=6, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Switch Theme", command=self.switch_theme, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=7, column=0, padx=10, pady=5)
+        tk.Button(self.command_frame, text="Exit", command=self.exit_app, width=20, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"]).grid(row=8, column=0, padx=10, pady=5)
+
+        # Text-to-Speech Input
+        self.speak_frame = tk.Frame(root, bg=self.themes[self.current_theme]["bg"])
+        self.speak_frame.pack(pady=20)
+
+        self.speak_label = tk.Label(self.speak_frame, text="Make Zuki Speak:", bg=self.themes[self.current_theme]["bg"], fg=self.themes[self.current_theme]["fg"])
+        self.speak_label.grid(row=0, column=0, padx=5)
+
+        self.speak_entry = tk.Entry(self.speak_frame, width=30)
+        self.speak_entry.grid(row=0, column=1, padx=5)
+
+        self.speak_button = tk.Button(self.speak_frame, text="Speak", command=self.make_zuki_speak, bg=self.themes[self.current_theme]["button_bg"], fg=self.themes[self.current_theme]["button_fg"])
+        self.speak_button.grid(row=0, column=2, padx=5)
+
+    def apply_theme(self):
+        """Apply the current theme to the entire app."""
+        theme = self.themes[self.current_theme]
+        self.root.config(bg=theme["bg"])
+
+    def switch_theme(self):
+        """Switch between light and dark themes."""
+        self.current_theme = "dark" if self.current_theme == "light" else "light"
+        self.apply_theme()
+        self.__init__(self.root)  # Reinitialize the UI to apply the theme
+
+    def greet_zuki(self):
+        """Greet Zuki and update mood."""
+        response = personality.greet_zuki()
+        self.mood_label.config(text=f"💭 Mood: {response}")
+        speech.speak(response)
+
+    def give_fruit(self):
+        """Give Zuki a fruit to make him happy."""
+        favorite_fruits = ["apple", "banana", "cherry"]
+        fruit = favorite_fruits[0]  # You can randomize this if desired
+        self.mood_label.config(text="💭 Mood: Happy (Thanks for the fruit!)", fg="green")
+        speech.speak(f"Yum! I love {fruit}! Thank you!")
+
+    def play_magic_trick(self):
+        """Play the magic trick game."""
+        zuki_games.magic_trick()
+
+    def play_20_questions(self):
+        """Play the 20 questions game."""
+        zuki_games.twenty_questions()
+
+    def make_zuki_speak(self):
+        """Make Zuki speak the entered text."""
+        text = self.speak_entry.get()
+        if text:
+            speech.speak(text)
+            messagebox.showinfo("Zuki Says", f"Zuki said: {text}")
+        else:
+            messagebox.showwarning("Input Error", "Please enter text for Zuki to speak.")
+
+    def view_notes(self):
+        """View all saved notes."""
+        response = notes.list_notes()
+        if response:
+            messagebox.showinfo("Your Notes", response)
+        else:
+            messagebox.showinfo("Your Notes", "No notes found.")
+
+    def clear_notes(self):
+        """Clear all saved notes."""
+        response = notes.clear_notes()
+        messagebox.showinfo("Notes Cleared", response)
+
+    def read_sensors(self):
+        """Read sensor data."""
+        response = sensors.read_sensors()
+        messagebox.showinfo("Sensor Data", response)
+
+    def exit_app(self):
+        """Exit the application."""
+        self.root.destroy()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ZukiApp(root)
+    root.mainloop()
