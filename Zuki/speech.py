@@ -1,12 +1,13 @@
-import pyttsx3
+import subprocess
 
 def speak(text):
-    engine = pyttsx3.init()
-    # Optionally, adjust rate, volume, or voice properties:
-    engine.setProperty('rate', 150)  # Speed percent (lower is slower)
-    engine.setProperty('volume', 0.9)  # Volume 0-1
-    engine.say(text)
-    engine.runAndWait()
+    """Use espeak to convert text to speech."""
+    try:
+        subprocess.run(["espeak", text], check=True)
+    except FileNotFoundError:
+        print("Error: 'espeak' is not installed. Please install it using 'sudo apt install espeak'.")
+    except Exception as e:
+        print(f"Error while trying to speak: {e}")
 
 # Usage
 speak("Hello, I am Zuki!")
