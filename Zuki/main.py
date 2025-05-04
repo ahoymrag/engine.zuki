@@ -11,6 +11,8 @@ import personality  # personality.py
 import zuki_games  # Our new file with the 2 games
 import time
 import os
+import random
+from chat_brain import EnhancedChatBrain
 
 def show_help():
     """Display available commands with animations."""
@@ -32,7 +34,8 @@ def show_help():
         "care guide         - Show how to take care of Zuki",
         "exit               - Shutdown Zuki",
         "zuki magic         - Play the number guessing magic trick!",
-        "20 questions       - Play a yes/no guess game!"
+        "20 questions       - Play a yes/no guess game!",
+        "chat               - Enter chat mode with Zuki"
     ]
 
     print("🛠️  Available Commands:\n")
@@ -124,9 +127,26 @@ def main():
             # Start the yes/no questions game
             zuki_games.twenty_questions()
 
+        elif command == "chat":
+            chat_mode()
+
         else:
             print("❌ Unknown command. Type 'help' for available commands.")
             speech.speak("Unknown command. Please type help for available commands.")
+
+def chat_mode():
+    chat_brain = EnhancedChatBrain()
+    print("\n🗣️ Entering chat mode with Zuki (type 'exit chat' to leave)")
+    print("Zuki: Hello! I'm excited to chat with you! What's on your mind?")
+    
+    while True:
+        user_input = input("\nYou: ").strip()
+        if user_input.lower() == "exit chat":
+            print("Zuki: Goodbye! Back to command mode!")
+            break
+        
+        response = chat_brain.process_input(user_input)
+        print(f"Zuki: {response}")
 
 if __name__ == "__main__":
     main()
