@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat with Zuki</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                background: linear-gradient(135deg, #1a0b2e, #120820);
+                font-family: 'Arial', sans-serif;
+                color: #fff;
+            }
+
+            .chat-container {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background: rgba(45, 27, 78, 0.2);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(81, 49, 141, 0.1);
+            }
+
+            .chat-header {
+                text-align: center;
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .chat-header h1 {
+                color: #b49ae9;
+                font-size: 2em;
+                margin: 0 0 20px 0;
+                letter-spacing: 2px;
+            }
+
+            .zuki-face {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 0 10px rgba(180, 154, 233, 0.3));
+            }
+
+            .chat-messages {
+                height: 400px;
+                overflow-y: auto;
+                margin-bottom: 20px;
+                padding: 20px;
+                background: rgba(45, 27, 78, 0.1);
+                border-radius: 15px;
+                border: 1px solid rgba(81, 49, 141, 0.1);
+            }
+
+            .message {
+                margin: 15px 0;
+                padding: 15px;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                opacity: 0;
+                animation: fadeIn 0.3s ease-out forwards;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .user-message {
+                background: linear-gradient(135deg, #51318d, #3b2368);
+                margin-left: 20%;
+                box-shadow: 0 4px 15px rgba(81, 49, 141, 0.2);
+            }
+
+            .zuki-message {
+                background: linear-gradient(135deg, #2d1b4e, #1f1235);
+                margin-right: 20%;
+                box-shadow: 0 4px 15px rgba(45, 27, 78, 0.2);
+            }
+
+            .chat-input {
+                display: flex;
+                gap: 10px;
+                background: rgba(45, 27, 78, 0.1);
+                padding: 15px;
+                border-radius: 12px;
+                border: 1px solid rgba(81, 49, 141, 0.1);
+            }
+
+            #message-input {
+                flex: 1;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 8px;
+                background: rgba(81, 49, 141, 0.1);
+                color: #fff;
+                font-size: 16px;
+                transition: all 0.3s ease;
+            }
+
+            #message-input:focus {
+                outline: none;
+                background: rgba(81, 49, 141, 0.2);
+                box-shadow: 0 0 20px rgba(81, 49, 141, 0.2);
+            }
+
+            button {
+                padding: 12px 30px;
+                border: none;
+                border-radius: 8px;
+                background: linear-gradient(135deg, #51318d, #3b2368);
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            button:hover {
+                background: linear-gradient(135deg, #5b3a9d, #452b78);
+                box-shadow: 0 5px 15px rgba(81, 49, 141, 0.3);
+            }
+
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(45, 27, 78, 0.1);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: rgba(81, 49, 141, 0.3);
+                border-radius: 3px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(81, 49, 141, 0.5);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="chat-container">
+            <div class="chat-header">
+                <svg class="zuki-face" viewBox="0 0 100 100" id="zuki-face">
+                    <!-- Face base -->
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#b49ae9"
+                        stroke-width="2" />
+
+                    <!-- Eyes -->
+                    <g id="eyes">
+                        <ellipse cx="35" cy="45" rx="8" ry="12" fill="none"
+                            stroke="#b49ae9" stroke-width="2" />
+                        <ellipse cx="65" cy="45" rx="8" ry="12" fill="none"
+                            stroke="#b49ae9" stroke-width="2" />
+                        <circle cx="35" cy="45" r="3" fill="#b49ae9"
+                            id="left-pupil" />
+                        <circle cx="65" cy="45" r="3" fill="#b49ae9"
+                            id="right-pupil" />
+                    </g>
+
+                    <!-- Mouth -->
+                    <path d="M 35 65 Q 50 75 65 65" fill="none" stroke="#b49ae9"
+                        stroke-width="2" id="mouth" />
+                </svg>
+                <h1>Chat with Zuki</h1>
+            </div>
+            <div class="chat-messages" id="messages"></div>
+            <div class="chat-input">
+                <input type="text" id="message-input"
+                    placeholder="Type your message..." autocomplete="off">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <script>
+            const sessionId = Date.now().toString();
+            const messagesDiv = document.getElementById('messages');
+            const input = document.getElementById('message-input');
+            const leftPupil = document.getElementById('left-pupil');
+            const rightPupil = document.getElementById('right-pupil');
+            const mouth = document.getElementById('mouth');
+
+            // Face animation functions
+            function updateFaceExpression(isTyping) {
+                // Mouth animation
+                mouth.setAttribute('d', isTyping ? 
+                    'M 35 65 Q 50 70 65 65' : // neutral
+                    'M 35 65 Q 50 75 65 65'   // smile
+                );
+            }
+
+            function followCursor(e) {
+                const rect = document.querySelector('.zuki-face').getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const angleX = (e.clientX - centerX) / window.innerWidth * 3;
+                const angleY = (e.clientY - centerY) / window.innerHeight * 2;
+                
+                leftPupil.setAttribute('cx', 35 + angleX);
+                rightPupil.setAttribute('cx', 65 + angleX);
+                leftPupil.setAttribute('cy', 45 + angleY);
+                rightPupil.setAttribute('cy', 45 + angleY);
+            }
+
+            // Event listeners for face animations
+            document.addEventListener('mousemove', followCursor);
+            input.addEventListener('input', () => updateFaceExpression(true));
+            input.addEventListener('blur', () => updateFaceExpression(false));
+
+            function addMessage(message, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'zuki-message'}`;
+                messageDiv.textContent = isUser ? `You: ${message}` : `Zuki: ${message}`;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                // Update face expression
+                updateFaceExpression(!isUser);
+            }
+
+            async function sendMessage() {
+                const message = input.value.trim();
+                if (!message) return;
+
+                addMessage(message, true);
+                input.value = '';
+                updateFaceExpression(true);
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            session_id: sessionId,
+                            message: message
+                        })
+                    });
+                    const data = await response.json();
+                    addMessage(data.response, false);
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, I encountered an error.', false);
+                }
+            }
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            // Add welcome message
+            window.onload = () => {
+                addMessage("Hello! I'm excited to chat with you! What's on your mind?", false);
+            };
+        </script>
+    </body>
+</html>

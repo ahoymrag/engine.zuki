@@ -13,6 +13,8 @@ import time
 import os
 import random
 from chat_brain import EnhancedChatBrain
+from web_chat import start_chat_server
+import threading
 
 def show_help():
     """Display available commands with animations."""
@@ -35,7 +37,8 @@ def show_help():
         "exit               - Shutdown Zuki",
         "zuki magic         - Play the number guessing magic trick!",
         "20 questions       - Play a yes/no guess game!",
-        "chat               - Enter chat mode with Zuki"
+        "chat               - Enter chat mode with Zuki",
+        "chat ui            - Launch web-based chat interface in browser"
     ]
 
     print("🛠️  Available Commands:\n")
@@ -129,6 +132,13 @@ def main():
 
         elif command == "chat":
             chat_mode()
+
+        elif command == "chat ui":
+            print("🌐 Launching Chat UI in your browser...")
+            # Start Flask server in a separate thread
+            threading.Thread(target=start_chat_server).start()
+            print("✨ Chat UI launched! You can continue using other commands here.")
+            print("💡 The chat interface will remain available at http://127.0.0.1:5001")
 
         else:
             print("❌ Unknown command. Type 'help' for available commands.")
