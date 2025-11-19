@@ -1,0 +1,12 @@
+.zuki/
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+engine.zuki.zip
+*.log
+
+

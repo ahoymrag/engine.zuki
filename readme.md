@@ -3,6 +3,19 @@
 ## Introduction
 Zuki is a Raspberry Pi-powered personal robot with a command-line interface (CLI) and an optional graphical UI that displays emotions and speech bubbles. The project is designed to be modular, with placeholder components that can be replaced with real implementations over time.
 
+## Raspberry Pi Offline Quickstart (Tiny Chat UI)
+1. Package the repo (on your dev machine):
+   - macOS/Linux: `bash package.sh`
+2. Copy `engine.zuki.zip` to your Raspberry Pi and unzip:
+   - `unzip engine.zuki.zip -d engine.zuki && cd engine.zuki`
+3. Run local setup (offline-friendly):
+   - `bash Zuki/install.sh`
+   - Optional TTS: `sudo apt-get install -y espeak-ng`
+   - If Tk is missing: `sudo apt-get install -y python3-tk`
+4. Start the tiny chat UI:
+   - `python3 pi_start.py`
+5. Tip: enable “Speak” in the UI to have Zuki read replies aloud.
+
 
 ## Tagline::::
 Zuki, a multi-functional interactive AI assistant with a graphical UI, speech, AI, and even a playable piano! 
