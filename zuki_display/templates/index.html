@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuki Display - Your Friendly Robot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🤖 Zuki</h1>
+            <p class="subtitle">Your Friendly Robot Friend</p>
+        </header>
+
+        <!-- 3D Face Container -->
+        <div id="face-container">
+            <canvas id="zuki-canvas"></canvas>
+        </div>
+
+        <!-- Menu - Expressions -->
+        <div class="menu-container">
+            <h2 class="menu-section-title">Expressions</h2>
+            <div class="menu-grid">
+                <button class="menu-btn" id="btn-happy" data-action="happy">
+                    <span class="emoji">😊</span>
+                    <span class="label">Happy</span>
+                </button>
+                <button class="menu-btn" id="btn-excited" data-action="excited">
+                    <span class="emoji">🎉</span>
+                    <span class="label">Excited</span>
+                </button>
+                <button class="menu-btn" id="btn-sleepy" data-action="sleepy">
+                    <span class="emoji">😴</span>
+                    <span class="label">Sleepy</span>
+                </button>
+                <button class="menu-btn" id="btn-surprised" data-action="surprised">
+                    <span class="emoji">😲</span>
+                    <span class="label">Surprised</span>
+                </button>
+                <button class="menu-btn" id="btn-wink" data-action="wink">
+                    <span class="emoji">😉</span>
+                    <span class="label">Wink</span>
+                </button>
+                <button class="menu-btn" id="btn-love" data-action="love">
+                    <span class="emoji">😍</span>
+                    <span class="label">Love</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu - Zuki Features -->
+        <div class="menu-container">
+            <h2 class="menu-section-title">Zuki Features</h2>
+            <div class="menu-grid">
+                <button class="menu-btn feature-btn" id="btn-greet" data-feature="greet">
+                    <span class="emoji">👋</span>
+                    <span class="label">Greet Zuki</span>
+                </button>
+                <button class="menu-btn feature-btn" id="btn-sense" data-feature="sense">
+                    <span class="emoji">📡</span>
+                    <span class="label">Read Sensors</span>
+                </button>
+                <button class="menu-btn feature-btn" id="btn-magic" data-feature="magic">
+                    <span class="emoji">🪄</span>
+                    <span class="label">Magic Trick</span>
+                </button>
+                <button class="menu-btn feature-btn" id="btn-20q" data-feature="20q">
+                    <span class="emoji">❓</span>
+                    <span class="label">20 Questions</span>
+                </button>
+                <button class="menu-btn feature-btn" id="btn-notes" data-feature="notes">
+                    <span class="emoji">📒</span>
+                    <span class="label">View Notes</span>
+                </button>
+                <button class="menu-btn feature-btn" id="btn-care" data-feature="care">
+                    <span class="emoji">💝</span>
+                    <span class="label">Care Guide</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-container">
+            <h2 class="menu-section-title">Chat with Zuki</h2>
+            <div class="chat-input-group">
+                <input type="text" id="chat-input" placeholder="Type a message to Zuki..." class="chat-input">
+                <button id="chat-send" class="chat-send-btn">Send</button>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="status-display">
+            <div class="status-item">
+                <span class="status-label">Status:</span>
+                <span class="status-value" id="status-text">Ready</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Mood:</span>
+                <span class="status-value" id="mood-text">Happy</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
+
